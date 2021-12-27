@@ -72,8 +72,8 @@ class ProductController extends Controller
     public function show(Product $product): JsonResponse
     {
         try {
-            if (method_exists(Repository::class, 'show')) {
-                return $this->repository->show(Product::class, $product);
+            if ($product) {
+                return $this->successWithSingleData($product);
             }
         } catch (Throwable $th) {
             Log::info($th);
