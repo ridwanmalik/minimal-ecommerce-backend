@@ -6,6 +6,7 @@ use Throwable;
 use App\Traits\File;
 use App\Models\Product;
 use App\Traits\Response;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -22,7 +23,7 @@ class ProductController extends Controller
      */
     public function index(): JsonResponse
     {
-        $products = Product::latest()->get();
+        $products = Product::all();
 
         return $this->successWithData($products, 'products');
     }
@@ -84,11 +85,11 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\Product\ProductRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(ProductRequest $request, Product $product): JsonResponse
+    public function update(Request $request, Product $product): JsonResponse
     {
 
         try {
@@ -101,11 +102,21 @@ class ProductController extends Controller
             }
 
             if ($request->expectsJson()) {
-                $product->name = $request->name;
-                $product->description = $request->description;
-                $product->price = $request->price;
-                $product->qty = $request->qty;
-                $product->image = $url ?: $product->image;
+                if ($request->name) {
+                    $product->name = $request->name;
+                }
+                if ($request->description) {
+                    $product->description = $request->description;
+                }
+                if ($request->price) {
+                    $product->price = $request->price;
+                }
+                if ($request->qty) {
+                    $product->qty = $request->qty;
+                }
+                if ($request->image) {
+                    $product->image = $url ?? null;
+                }
 
                 if ($product->save()) {
                     return $this->success('Product Updated Successfully!', $product, 'product', ResponseAlias::HTTP_OK);
@@ -129,9 +140,9 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         try {
-            if (method_exists(Repository::class, 'delete')) {
-                if ($this->repository->delete(Product::class, $product)) {
-                    return $this->success('Product deleted Successfully!', '', 'product', ResponseAlias::HTTP_OK);
+            if ($product) {
+                if ($product->delete()) {
+                    return $this->success('Product deleted Successfully!', $product, 'product', ResponseAlias::HTTP_OK);
                 }
                 return $this->error('Sorry! something went wrong!!', null, ResponseAlias::HTTP_UNAUTHORIZED);
             }
