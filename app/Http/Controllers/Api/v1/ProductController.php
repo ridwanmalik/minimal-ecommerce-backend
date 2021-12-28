@@ -10,7 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Product\ProductRequest;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class ProductController extends Controller
@@ -35,7 +36,7 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(ProductRequest $request, Product $product): JsonResponse
+    public function store(StoreProductRequest $request, Product $product): JsonResponse
     {
         try {
 
@@ -89,7 +90,7 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Product $product): JsonResponse
+    public function update(UpdateProductRequest $request, Product $product): JsonResponse
     {
 
         try {

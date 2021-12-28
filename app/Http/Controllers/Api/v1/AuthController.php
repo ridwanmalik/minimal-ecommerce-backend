@@ -8,13 +8,13 @@ use App\Traits\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\RegisterUserRequest;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class AuthController extends Controller
 {
     use Response;
-    public function register(RegisterRequest $request): JsonResponse
+    public function register(RegisterUserRequest $request): JsonResponse
     {
         $validated = $request->validated();
         try {

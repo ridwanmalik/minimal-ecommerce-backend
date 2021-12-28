@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Database\Seeders\AdminSeeder;
+use Database\Seeders\OrderSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AdminSeeder::class,
             ProductSeeder::class,
+            OrderSeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();
     }

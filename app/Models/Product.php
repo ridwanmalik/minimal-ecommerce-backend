@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Product extends Model
 {
@@ -16,4 +17,19 @@ class Product extends Model
         'qty',
         'image'
     ];
+
+    public function setPriceAttribute($value)
+    {
+        $this->attributes['price'] = number_format($value, 2);
+    }
+
+    /**
+     * The orders that belong to the Product
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function orders(): BelongsToMany
+    {
+        return $this->belongsToMany(Order::class)->withTimestamps();
+    }
 }
