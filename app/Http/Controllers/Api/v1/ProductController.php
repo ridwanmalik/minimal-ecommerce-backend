@@ -3,20 +3,20 @@
 namespace App\Http\Controllers\Api\v1;
 
 use Throwable;
-use App\Traits\File;
 use App\Models\Product;
 use App\Traits\Response;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class ProductController extends Controller
 {
-    use Response, File;
+    use Response;
     /**
      * Display a listing of the resource.
      *
@@ -40,19 +40,18 @@ class ProductController extends Controller
     {
         try {
 
-            if ($file = $request->file('image')) {
-                $path = 'products/images/';
-                $url = $this->file($file, $path, 300, 400);
-            }
 
+            
             if ($request->expectsJson()) {
-
+                
                 $product->name = $request->name;
                 $product->description = $request->description;
                 $product->price = $request->price;
                 $product->qty = $request->qty;
-                $product->image = $url ?? null;
-
+                if ($request->hasFile('image')) {
+                    $product->image = Storage::url($request->image->store('public/product/image'));
+                }
+                
                 if ($product->save()) {
                     return $this->success('Product Created Successfully!', $product, 'product', ResponseAlias::HTTP_OK);
                 }
@@ -95,13 +94,6 @@ class ProductController extends Controller
 
         try {
 
-            if ($file = $request->hasFile('image')) {
-                $path = 'products/images/';
-                $url = $this->file($file, $path, 300, 400);
-            } else {
-                $url = '';
-            }
-
             if ($request->expectsJson()) {
                 if ($request->name) {
                     $product->name = $request->name;
@@ -115,9 +107,10 @@ class ProductController extends Controller
                 if ($request->qty) {
                     $product->qty = $request->qty;
                 }
-                if ($request->image) {
-                    $product->image = $url ?? null;
+                if ($request->hasFile('image')) {
+                    $product->image = Storage::url($request->image->store('public/product/image'));
                 }
+                
 
                 if ($product->save()) {
                     return $this->success('Product Updated Successfully!', $product, 'product', ResponseAlias::HTTP_OK);
