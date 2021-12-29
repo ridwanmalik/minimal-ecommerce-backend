@@ -49,7 +49,7 @@ class ProductController extends Controller
         }
         $product->save();
 
-        return redirect()->route('product.index')->with(['success' => 'Successfully created a product']);
+        return redirect()->route('products.index')->with(['success' => 'Successfully created a product']);
     }
 
     /**
@@ -92,7 +92,7 @@ class ProductController extends Controller
         }
         $product->save();
 
-        return redirect()->route('product.index')->with(['success' => 'Successfully updated a product']);
+        return redirect()->route('products.index')->with(['success' => 'Successfully updated a product']);
     }
 
     /**
@@ -104,6 +104,6 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         $product->delete();
-        return redirect()->route('product.index');
+        return redirect()->route('products.index');
     }
 }

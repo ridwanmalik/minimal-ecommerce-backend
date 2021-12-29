@@ -8,8 +8,9 @@ use App\Http\Controllers\Admin\ProductController;
 
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'is_admin']], function () {
     Route::get('dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    Route::resource('product', ProductController::class);
-    Route::get('order', [OrderController::class, 'index'])->name('order.index');
+    Route::resource('products', ProductController::class);
+    Route::resource('orders', OrderController::class)->only(['index', 'destroy']);
+    Route::get('changeOrderStatus', [OrderController::class, 'changeOrderStatus']);
 });
 
 require __DIR__ . '/auth.php';
