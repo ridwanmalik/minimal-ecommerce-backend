@@ -26,6 +26,7 @@ class StoreOrderRequest extends FormRequest
         return [
             'user_id' => 'required|integer|exists:user,id',
             'product.*' => 'required|integer|exists:product,id',
+            'qty.*' => 'required|integer',
             'status' => 'string|in:pending,approved,rejected,processing,shipped,delivered',
         ];
     }

@@ -18,6 +18,7 @@ class CreateOrderProductTable extends Migration
             $table->foreignId('order_id')->constrained();
             $table->foreignId('product_id')->constrained();
             $table->decimal('price', 8, 2);
+            $table->integer('qty');
             $table->timestamps();
         });
     }

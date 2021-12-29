@@ -28,8 +28,8 @@
                 <tr>
                     <th width="1%"></th>
                     <th class="text-nowrap">User</th>
+                    <th class="text-nowrap">Products</th>
                     <th class="text-nowrap">Unique Id</th>
-                    <th class="text-nowrap">Quantity</th>
                     <th class="text-nowrap">Total Price</th>
                     <th class="text-nowrap">Status</th>
                     <th class="text-nowrap">Action</th>
@@ -40,8 +40,19 @@
                 <tr class="gradeU">
                     <td width="1%" class="f-s-600 text-inverse">{{ $loop->iteration }}</td>
                     <td>{{ $order->user->name }}</td>
+                    <td>
+                        <ul class="list-group">
+                            @foreach ($order->products as $product)
+                            <li class="list-group-item">
+                                {{$product->name}} -
+                                {{$product->details->price}} *
+                                {{$product->details->qty}} =
+                                {{$product->details->qty * $product->details->price}}
+                            </li>
+                            @endforeach
+                        </ul>
+                    </td>
                     <td>{{ $order->unique_id }}</td>
-                    <td>{{ $order->qty }}</td>
                     <td>{{ $order->total }}</td>
                     <td>
                         <select class="form-control" name="status" id="order{{ $order->id }}" onchange="changeStatus('order{{ $order->id }}')" {{ $order->status == 'delivered' ? 'disabled' : '' }}>

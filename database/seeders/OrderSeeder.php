@@ -18,9 +18,14 @@ class OrderSeeder extends Seeder
         Order::factory(10)->create();
         foreach (Order::all() as $order) {
             $products = Product::inRandomOrder()->take(rand(1, 5))->pluck('price', 'id');
+            $total = 0;
             foreach ($products as $productId => $price) {
-                $order->products()->attach($productId, ['price' => $price]);
+                $qty = rand(1, 5);
+                $order->products()->attach($productId, ['price' => $price, 'qty' => $qty]);
+                $total += ($price * $qty);
             }
+            $order->total = $total;
+            $order->save();
         }
     }
 }

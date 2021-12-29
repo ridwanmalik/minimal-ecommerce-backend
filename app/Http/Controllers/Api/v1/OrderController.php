@@ -24,7 +24,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::with('products')->get();
+        $orders = Order::with(['user', 'products'])->get();
         return $this->successWithData($orders, 'orders');
     }
 
@@ -39,27 +39,31 @@ class OrderController extends Controller
     {
         try {
             if ($request->expectsJson()) {
+                $productCount = sizeof($request->product);
+                $qtyCount = sizeof($request->qty);
+                if ($productCount != $qtyCount) {
+                    return $this->error('Number of Products do not match with number of Quantity!!', null, ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+                }
+                $products = Product::find($request->product);
+                $index = 0;
+                $total = 0;
+                foreach ($products as $product) {
+                    if ($product->qty < $request->qty[$index]) {
+                        return $this->error('Product #' . $product->id . ' is out of stock now!!', null, ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+                    }
+                    $total += ($product->price * $request->qty[$index]);
+                }
                 $order->user_id = $request->user_id;
                 $order->unique_id = Str::random(10);
                 $order->status = $request->status ? $request->status : 'pending';
-                $products = Product::find($request->product);
-                foreach ($products as $product) {
-                    // $product_data = Product::find($product);
-                    $order->products()->attach($product->id, ['price' => $product->price]);
-                }
+                $order->total = $total;
                 $order->save();
-                return $this->successWithData($order, 'order');
-                // $order->qty =
-                // $order->total_price = ($request->stock_amount * $this->repository->price($request->product_id));
-
-                // if ($this->repository->checkStockExistsOrNot($request->product_id) && $order->save()) {
-                //     //let assume admin is only one
-                //     $user = User::getAdmin()->first();
-                //     // $user->notify(new \App\Notifications\OrderCompleted($order));
-                //     return $this->success('Order Created Successfully!', $order, 'order', ResponseAlias::HTTP_OK);
-                // }
-
-                return $this->error('Product is out of stock now!!', null, ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+                $index = 0;
+                foreach ($products as $product) {
+                    $order->products()->attach($product->id, ['price' => $product->price, 'qty' => $request->qty[$index]]);
+                    $index++;
+                }
+                return $this->success('Order Created Successfully!', $order->load(['user', 'products']), 'order', ResponseAlias::HTTP_OK);
             }
             return $this->error('Requested data is not valid!!', null, ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
         } catch (Throwable $e) {
@@ -76,7 +80,12 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        //
+        try {
+            return $this->successWithData($order->load(['user', 'products']), 'order');
+        } catch (Throwable $th) {
+            Log::info($th);
+            return $this->error('Sorry! something went wrong!!', null, ResponseAlias::HTTP_UNAUTHORIZED);
+        }
     }
 
     /**
@@ -88,17 +97,17 @@ class OrderController extends Controller
      */
     public function update(UpdateOrderRequest $request, Order $order)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Order $order)
-    {
-        //
+        try {
+            if ($request->status) {
+                $order->status = $request->status;
+            }
+            if ($order->save()) {
+                return $this->successWithData($order->load(['user', 'products']), 'order');
+            }
+            return $this->error('Something went wrong!', null, ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (Throwable $th) {
+            Log::info($th);
+            return $this->error('Sorry! something went wrong!!', null, ResponseAlias::HTTP_UNAUTHORIZED);
+        }
     }
 }

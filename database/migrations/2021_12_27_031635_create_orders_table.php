@@ -17,8 +17,7 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('unique_id')->unique();
-            $table->integer('qty');
-            $table->decimal('total', 16, 2);
+            $table->decimal('total', 16, 2)->nullable();
             $table->enum('status', ['pending', 'approved', 'rejected', 'processing', 'shipped', 'delivered'])->default('pending');
             $table->timestamps();
         });
