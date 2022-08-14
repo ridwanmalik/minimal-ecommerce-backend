@@ -13,5 +13,5 @@
     > By default, the username is **root** and password is also **root**. **(This is for Lamp)**
 
 7. Open terminal and Run `php artisan key:generate`
-8. Run `php artisan migrate`
+8. Run `php artisan migrate --seed`
 9. Run `php artisan serve`
