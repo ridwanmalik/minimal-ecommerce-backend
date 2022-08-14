@@ -41,7 +41,7 @@ class ProductFactory extends Factory
             'description' => $this->faker->sentence(10),
             'price' => $this->faker->randomFloat(2, 10, 1000),
             'qty' => $this->faker->numberBetween(10, 2000),
-            'image' => $image[rand(0,19)],
+            'image' => $images[rand(0,19)],
         ];
     }
 }
