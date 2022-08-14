@@ -45,7 +45,7 @@ class ProductController extends Controller
         $product->qty = $request->qty;
         $product->description = $request->description;
         if ($request->hasFile('image')) {
-            $product->image = Storage::url($request->image->store('public/product/image'));
+            $product->image = url('/') . Storage::url($request->image->store('public/product/image'));
         }
         $product->save();
 
@@ -88,7 +88,7 @@ class ProductController extends Controller
         $product->qty = $request->qty;
         $product->description = $request->description;
         if ($request->hasFile('image')) {
-            $product->image = Storage::url($request->image->store('public/product/image'));
+            $product->image = url('/') . Storage::url($request->image->store('public/product/image'));
         }
         $product->save();
 
