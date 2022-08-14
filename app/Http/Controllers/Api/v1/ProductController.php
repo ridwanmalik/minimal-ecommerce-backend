@@ -24,7 +24,7 @@ class ProductController extends Controller
      */
     public function index(): JsonResponse
     {
-        $products = Product::all();
+        $products = Product::latest()->get();
 
         return $this->successWithData($products, 'products');
     }
